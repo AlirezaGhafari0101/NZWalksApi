@@ -41,7 +41,7 @@ namespace NZWalks.API.Controllers
                 return NotFound();
             }
             var walkDtoModel = mapper.Map<List<WalkDto>>(walksDomainModel);
-            return Ok(walkDtoModel); 
+            return Ok(walkDtoModel);
         }
 
 
@@ -58,7 +58,27 @@ namespace NZWalks.API.Controllers
         }
 
         [HttpPut("{id:Guid}")]
-        public  async  Task<IActionResult> Update([FromRoute] Guid  id,  [FromBody] UpdateWalkRequestDto updateWalkRequestDto)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateWalkRequestDto updateWalkRequestDto)
+        {
+            var existedDomainModel = await walkRepository.UpdateAsync(id, mapper.Map<Walk>(updateWalkRequestDto));
+            if (existedDomainModel == null)
+            {
+                return NotFound();
+            }
+            var walkDtoModel = mapper.Map<WalkDto>(existedDomainModel);
+            return Ok(walkDtoModel);
+        }
+
+        [HttpDelete("{id:Guid}")]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        {
+            var existedDomainModel = await walkRepository.DeleteAsync(id);
+            if (existedDomainModel == null)
+            {
+                return NotFound();
+            }
+            return Ok(mapper.Map<WalkDto>(existedDomainModel));
+        }
         #endregion
     }
 }
