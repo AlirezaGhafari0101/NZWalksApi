@@ -48,31 +48,45 @@ namespace NZWalks.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDto region)
         {
-            var regionDomain = mapper.Map<Region>(region);
+            if (ModelState.IsValid)
+            {
+                var regionDomain = mapper.Map<Region>(region);
 
-            await regionRepository.CreateAsync(regionDomain);
+                await regionRepository.CreateAsync(regionDomain);
 
-            var regionDto = mapper.Map<RegionDto>(regionDomain);
+                var regionDto = mapper.Map<RegionDto>(regionDomain);
 
-            return CreatedAtAction(nameof(GetById), new { id = regionDomain.Id }, regionDto);
+                return CreatedAtAction(nameof(GetById), new { id = regionDomain.Id }, regionDto);
+            }
+            else
+            {
+                return BadRequest(region);
+            }
         }
 
         [HttpPut("{id:Guid}")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto UpdateRegionRequestDto)
         {
 
-            var regionDomain = mapper.Map<Region>(UpdateRegionRequestDto);
-
-            var regionDomainModel = await regionRepository.UpdateAsync(id, regionDomain);
-
-            if (regionDomainModel == null)
+            if (ModelState.IsValid)
             {
-                return NotFound();
+                var regionDomain = mapper.Map<Region>(UpdateRegionRequestDto);
+
+                var regionDomainModel = await regionRepository.UpdateAsync(id, regionDomain);
+
+                if (regionDomainModel == null)
+                {
+                    return NotFound();
+                }
+
+                var regionDto = mapper.Map<RegionDto>(regionDomainModel);
+
+                return Ok(regionDto);
             }
-
-            var regionDto = mapper.Map<RegionDto>(regionDomainModel);
-
-            return Ok(regionDto);
+            else
+            {
+                return BadRequest(UpdateRegionRequestDto);
+            }
         }
 
         [HttpDelete("{id:Guid}")]
