@@ -60,7 +60,7 @@ namespace NZWalks.API.Controllers
             }
             else
             {
-                return BadRequest(region);
+                return BadRequest(ModelState);
             }
         }
 
@@ -85,7 +85,7 @@ namespace NZWalks.API.Controllers
             }
             else
             {
-                return BadRequest(UpdateRegionRequestDto);
+                return BadRequest(ModelState);
             }
         }
 
