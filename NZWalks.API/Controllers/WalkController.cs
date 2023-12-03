@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NZWalks.API.CustomActonFilters;
 using NZWalks.API.Models.Domain;
@@ -9,6 +10,7 @@ namespace NZWalks.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class WalkController : ControllerBase
     {
         #region Ctor
