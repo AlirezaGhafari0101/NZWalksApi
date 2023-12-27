@@ -8,12 +8,15 @@ using NZWalks.API.Repositories;
 using NZWalks.API.Repositories.Token;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using NZWalks.API.Repositories.Image;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddHttpContextAccessor();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -44,23 +47,6 @@ builder.Services.AddSwaggerGen(options =>
             new List<string>()
         }
     });
-
-    //options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    //{
-    //    {
-    //        new OpenApiSecurityScheme
-    //        {
-    //            Reference=new OpenApiReference
-    //            {
-
-    //            },
-    //            Scheme="Oauth2",
-    //            Name=JwtBearerDefaults.AuthenticationScheme,
-    //            In=ParameterLocation.Header,
-    //        },
-    //        new List<string>()
-    //    }
-    //});
 });
 
 //
@@ -76,6 +62,7 @@ builder.Services.AddScoped<IRegionRepository, RegionRepository>();
 builder.Services.AddScoped<IWalkRepository, WalkRepository>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
+builder.Services.AddScoped<IImageRepository, ImageRepository>();
 
 //  identity injection
 builder.Services.AddIdentityCore<IdentityUser>()
@@ -125,6 +112,12 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images")),
+    RequestPath = "/Images"
+});
 
 app.MapControllers();
 
